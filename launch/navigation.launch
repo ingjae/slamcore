@@ -44,27 +44,26 @@
   <arg name="scan_topic" default="scan" />
   <arg name="cmd_vel_topic" default="/base_controller/cmd_vel" />
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-  	<rosparam file="$(find james)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
-  	<rosparam file="$(find james)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
-  	<rosparam file="$(find james)/param/local_costmap_params.yaml" command="load" />
-  	<rosparam file="$(find james)/param/global_costmap_params.yaml" command="load" />
-  	<rosparam file="$(find james)/param/teb_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find james)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find james)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find james)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find james)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find james)/param/teb_local_planner_params.yaml" command="load" />
 
-		<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
-		<param name="base_global_planner" value="navfn/NavfnROS" />
+    <!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
+    <param name="base_global_planner" value="navfn/NavfnROS" />
 
-		<param name="planner_frequency" value="1.0" />
-		<param name="planner_patience" value="5.0" />
-  	<param name="shutdown_costmaps" value="false" />
+    <param name="planner_frequency" value="1.0" />
+    <param name="planner_patience" value="5.0" />
+    <param name="shutdown_costmaps" value="false" />
 
-		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
-		<param name="controller_frequency" value="5.0" />
-		<param name="controller_patience" value="15.0" />
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="5.0" />
+    <param name="controller_patience" value="15.0" />
 
     <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
     <remap from="odom" to="$(arg odom_topic)"/>
     <remap from="scan" to="$(arg scan_topic)"/>
-	</node>
+  </node>
 
-  <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find james_v2_1)/rviz/semi_james_nav.rviz" /> -->
 </launch>
