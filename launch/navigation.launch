@@ -1,0 +1,70 @@
+<launch>
+
+  
+  <!-- ROS control -->
+  <include file="$(find watt_robothw)/launch/hw.launch" />
+  
+  <!-- Wake up lidar -->
+  <include file="$(find lidar)/launch/lidar.launch" />
+
+  <!-- base_link tf x,y,z yaw,pitch,roll-->
+  <node pkg="tf" type="static_transform_publisher" name="base_link_static" args="0.0 0 0.0 0 0 1.57 base base_footprint 100"/>
+
+  <!-- Optional arguments -->
+  <!-- <arg if="$(eval optenv('CONFIG_FILE') != '')" name="config_file" value="$(env CONFIG_FILE)"/>
+  <arg unless="$(eval optenv('CONFIG_FILE') != '')" name="config_file" value="$(arg default_config_file)"/> -->
+  <arg name="camera_link_frame_xyz" default="$(env CAMERA_LINK_FRAME_XYZ)" doc="Space-separated XYZ pose of the Camera frame with regards to the base"/>
+  <arg name="camera_link_frame_rpy" default="$(optenv CAMERA_LINK_FRAME_RPY 0 0 0)" doc="Space-eparated RPY Rotation of the Camera frame with regards to the base"/>
+
+  <arg name="waypoint_nav" default="false" doc="Enable waypoint navigation (bool)"/>
+  <arg name="patrol_mode" default="false" doc="Follow the given waypoints perpetually"/>
+  <arg name="output" default="screen"/>
+  <arg name="config_file" value="/home/watt/slamcore/custom/indoor_ground_robot.json "/>
+  <!-- <arg name="config_file" default=""/> -->
+  <arg name="camera_tf_root" value="realsense"/>
+
+  <arg name="publish_hw_timestamps" default="true"/>
+
+  <!-- SLAMcore -->
+  <include file="$(find slamcore_slam)/launch/run_slam.launch" >
+    <arg name="session_file" default="/home/watt/slamcore/map/cluster/office/cluster_office.session" doc="Session file, set it to empty if you want to run in classic SLAM"/>
+    <arg name="map_frame" value="map"/>
+    <arg name="odom_frame" value="odom"/>
+    <arg name="base_frame" value="base"/>
+    <arg name="generate_map2d" value="true"/>
+    <arg name="odom_reading_topic" value=""/>
+    <arg name="publish_tf" default="true" />
+
+  </include>
+
+  
+  <!-- move_base -->
+  <arg name="map_topic" value="/slamcore/map"/>
+  <arg name="odom_topic" default="/slamcore/odom" />
+  <arg name="scan_topic" default="scan" />
+  <arg name="cmd_vel_topic" default="/base_controller/cmd_vel" />
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  	<rosparam file="$(find james)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+  	<rosparam file="$(find james)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+  	<rosparam file="$(find james)/param/local_costmap_params.yaml" command="load" />
+  	<rosparam file="$(find james)/param/global_costmap_params.yaml" command="load" />
+  	<rosparam file="$(find james)/param/teb_local_planner_params.yaml" command="load" />
+
+		<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
+		<param name="base_global_planner" value="navfn/NavfnROS" />
+
+		<param name="planner_frequency" value="1.0" />
+		<param name="planner_patience" value="5.0" />
+  	<param name="shutdown_costmaps" value="false" />
+
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" />
+
+    <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+    <remap from="scan" to="$(arg scan_topic)"/>
+	</node>
+
+  <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find james_v2_1)/rviz/semi_james_nav.rviz" /> -->
+</launch>
