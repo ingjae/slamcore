@@ -1,0 +1,51 @@
+{
+  "Version": "1.0.0",
+  "Base":
+  {
+    "ProfileName": "high_accuracy_mapping",
+    "EnableFeatureMap2D": true
+  },
+  "Position":
+  {
+    "Estimator":
+    {
+      "NumKeyFrames": 9,
+      "NumIMUFrames": 5,
+      "TimeBudget": "33ms"
+    },
+    "Frontend":
+    {
+      "NumKeypoints": 250,
+      "MaxDepthUncertaintyRatio": 2.0,
+      "RadiusANMS": 11.0,
+      "TrackingOnPlane":
+      {
+        "DoTrackingOnPlane": false
+      }
+    },
+    "MultiSession":
+    {
+      "GBAUseInertialFactors": true
+    }
+  },
+  "Mapping":
+  {
+    "HeightMapper":
+    {
+      "MaxMapDimensions":100.0,
+      "CellSize": 0.05,
+      "OccupancyExtraction":
+      {
+        "Method": "Gradient",
+        "Height":
+        {
+          "HeightThreshold": -0.25
+        },
+        "Gradient":
+        {
+          "GradientThreshold": 1.0
+        }
+      }
+    }
+  }
+}
