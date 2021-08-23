@@ -1,0 +1,2 @@
+# slamcore
+slamcore settings
